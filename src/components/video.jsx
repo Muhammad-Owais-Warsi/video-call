@@ -54,6 +54,7 @@ export default function Room({ token }) {
              
             />
         <RoomAudioRenderer />
+        
 
 <ControlBar />
         </LiveKitRoom>
