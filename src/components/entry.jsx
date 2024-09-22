@@ -3,11 +3,38 @@ import { useNavigate } from "react-router-dom";
 
 export default function Entry() {
     const [room, setRoom] = useState("");
+    const [roomLink, setRoomLink] = useState("");
+    const [showToast, setShowToast] = useState(false);
     const navigate = useNavigate();
 
     const enter = () => {
+        if (!roomLink) {
+            alert("Create room first"); // Replace with your custom toast function
+            return;
+        }
         if (room.trim()) {
             navigate(`/lobby/${room}/${Math.floor(Math.random() * 100) + 1}`);
+        }
+    };
+
+    const createRoom = () => {
+        if (room.trim()) {
+            const generatedLink = `${window.location.origin}/lobby/${room}/${Math.floor(Math.random() * 100) + 1}`;
+            setRoomLink(generatedLink);
+            setShowToast(true);
+        }
+    };
+
+    const copyToClipboard = () => {
+        if (roomLink) {
+            navigator.clipboard.writeText(roomLink)
+                .then(() => {
+                  
+                    setShowToast(false); // Hide the toast after copying
+                })
+                .catch((err) => {
+                    console.error("Failed to copy: ", err);
+                });
         }
     };
 
@@ -30,15 +57,34 @@ export default function Entry() {
                 onChange={(e) => setRoom(e.target.value)}
             />
             <button
-                className="w-full max-w-md px-6 py-2 sm:px-8 sm:py-3 text-lg sm:text-xl bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md transition-all duration-300 focus:outline-none"
+                className="w-full max-w-md px-6 py-2 sm:px-8 sm:py-3 text-lg sm:text-xl bg-[rgb(42,42,42)] text-green-500 rounded-lg shadow-md transition-all duration-300 focus:outline-none mb-4"
+                onClick={createRoom}
+            >
+                Create Room
+            </button>
+            <button
+                className="w-full max-w-md px-6 py-2 sm:px-8 sm:py-3 text-lg sm:text-xl bg-[rgb(42,42,42)] text-blue-500 rounded-lg shadow-md transition-all duration-300 focus:outline-none mb-4"
                 onClick={enter}
             >
                 Enter Lobby
             </button>
+
+            {showToast && (
+                <div className="fixed flex justify-center items-center gap-9 top-5 left-1/2 transform -translate-x-1/2 bg-[rgb(42,42,42)] text-white rounded-md shadow-lg p-4">
+                    <p > <span className="font-bold ">{roomLink}</span></p>
+                    <button
+                        onClick={copyToClipboard}
+                        className="rounded-md px-4 py-2 bg-[rgb(42,42,42)] border-cyan-500 border text-white"
+                    >
+                        Copy
+                    </button>
+                </div>
+            )}
+
             <footer className="absolute bottom-5 left-0 right-0 text-center text-sm text-gray-400">
-                Made with 
-                <span style={{ color: "red", margin: "0 4px" }}>❤️</span> 
-                by {' '} 
+                Made with
+                <span style={{ color: "red", margin: "0 4px" }}>❤️</span>
+                by{' '}
                 <a
                     href="https://owais-warsi.vercel.app"
                     target="_blank"
